@@ -2,7 +2,9 @@
 using namespace std;
 #include<iostream>
 #include<vector>
-
+#include<map>
+#include<queue>
+#include<utility>
 int main(int argc, char *argv[]) 
 {
     int tileN;
@@ -16,6 +18,7 @@ int main(int argc, char *argv[])
     int endRow;
     int endCol;
     int tmp;
+    int totalCost;
     vector<char> tileNames;
     vector<char> tileCosts;
     vector<vector<int>> map;
@@ -44,7 +47,7 @@ int main(int argc, char *argv[])
                 {
                     tmp = tileCosts[k];
                 }
-                map[i][j] = tile;
+                map[i][j] = tmp;
             }
             cout << map[i][j] << " ";
         }
@@ -55,7 +58,19 @@ int main(int argc, char *argv[])
     cin >> startCol;
     cin >> endRow;
     cin >> endCol;
-
+    priority_queue<char> frontier;
+    frontier.push(0);
+    std::map<int,int> marked;
+    while(!frontier.empty());  
+    {
+        int variable = frontier.top();
+        frontier.pop();
+        if(marked.find(variable) != marked.end())
+        {
+            
+        }
+        
+    }
     return 0;
 
 }
