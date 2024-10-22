@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     vector<char> tileNames;
     vector<int> tileCosts;
     vector<vector<int>> map;
+	vector<vector<int>>	distances;
 
     cin >> tileN;
     for(int i = 0; i < tileN; i++)
@@ -35,9 +36,11 @@ int main(int argc, char *argv[])
     cin >> mapCols;
 
     map.resize(mapRows);
+	distances.resize(mapRows);
     for(int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
+		distances[i].resize(mapCols);
         for(int j = 0; j < mapCols; j++)
         {
             cin >> tile;
@@ -48,6 +51,7 @@ int main(int argc, char *argv[])
                     tmp = tileCosts[k];
                 }
                 map[i][j] = tmp;
+				distances[i][j] = -1;
             }
             cout << map[i][j] << " ";
         }
@@ -58,26 +62,54 @@ int main(int argc, char *argv[])
     cin >> startCol;
     cin >> endRow;
     cin >> endCol;
+
     priority_queue<pair<int,pair<int,int> > > frontier;
-    frontier.push({-0,{startRow,startCol}});
+	priority_queue<pair<int,pair<int,int> > > prevFrontier;
+    frontier.push({0,{startRow,startCol}});
+	prevFrontier.push({0,{startRow,startCol}});
     std::map<pair<int,int>, int> marked;
-    while(!frontier.empty())  
+	distances[startRow][startCol] = 0;
+	int previousRow;
+	int previousCol;
+	int counter = 0;
+    
+	while(!frontier.empty())  
     {
+		counter++;
         auto it = frontier.top();
         int weight = -it.first;
         int row = it.second.first;
         int col = it.second.second;
+		
+		it = prevFrontier.top();
+		previousRow = it.second.first;
+		previousCol = it.second.second;
+
+		bool check = false;
         frontier.pop();
+		prevFrontier.pop();
+		//cout << weight << endl;
+		//cout << row << " ";
+		//cout << col << endl;
+		
         if(marked.find({row,col}) != marked.end())
         {
             continue;
         }
+		
         marked.insert({{row,col},weight});
-        if(row == endRow && col == endCol)
+		
+
+		if (counter!=1) distances[row][col] = (map[previousRow][previousCol]) + (distances[previousRow][previousCol]);
+		else distances[row][col] = 0;
+        /*
+		if(row == endRow && col == endCol)
         {
-            cout << weight << endl;
+            //cout << weight << endl;
             break;
         }
+		*/
+		/*
         for(int i = 0; i < 1; ++i)
         {
             for(int j = 0; j < 1; ++j)
@@ -91,9 +123,67 @@ int main(int argc, char *argv[])
                 
             }
         }
+		*/
+		if(row!=0){
+			if(marked.find({row-1,col}) != marked.end())
+			{
+				check = true;
+			}
+            if(check == false){
+                frontier.push({-map[row-1][col],{row-1,col}});
+				prevFrontier.push({-map[row-1][col],{row,col}});
+				cout << row-1 << " " << col << " ";
+            }
+        }
+        check = false;
+        if(row != mapRows-1){
+            if(marked.find({row+1,col}) != marked.end())
+            {
+                check = true;
+            }
+            if(check == false){
+                frontier.push({-map[row+1][col],{row+1,col}});
+				prevFrontier.push({-map[row+1][col],{row,col}});
+				cout << row+1 << " " << col << " ";
+            }
+        }
+        check = false;
+        if(col!=0){
+            if(marked.find({row,col-1}) != marked.end())
+            {
+                check = true;
+            }
+            if(check == false){
+                frontier.push({-map[row][col-1],{row,col-1}});
+				prevFrontier.push({-map[row][col-1],{row,col}});
+				cout << row << " " << col-1 << " ";
+            }
+        }
+        check = false;
+        if(col != mapCols-1){
+            if(marked.find({row,col+1}) != marked.end())
+            {
+                check = true;
+            }
+            if(check == false){
+                frontier.push({-map[row][col+1],{row,col+1}});
+				prevFrontier.push({-map[row][col+1],{row,col}});
+				cout << row << " " << col+1 << " ";
+            }
+        }
+		cout << endl;
+		check = false;
+
+
 
         
     }
+	for(int i = 0; i < mapRows; i ++){
+		for(int j = 0; j < mapCols; j++){
+			cout << distances[i][j] << " ";
+		}
+		cout << endl;
+	}
     return 0;
 
 }
