@@ -34,14 +34,10 @@ int main(int argc, char *argv[])
     cin >> mapRows;
     cin >> mapCols;
 
-     vector<vector<int>> distances;
-
-    distances.resize(mapRows);
     map.resize(mapRows);
     for(int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
-        distances[i].resize(mapCols);
         for(int j = 0; j < mapCols; j++)
         {
             cin >> tile;
@@ -52,25 +48,27 @@ int main(int argc, char *argv[])
                     tmp = tileCosts[k];
                 }
                 map[i][j] = tmp;
-                distances[i][j] = tmp;
             }
-            //cout << distances[i][j] << " ";
+            cout << map[i][j] << " ";
         }
-        //cout << endl;
+        cout << endl;
     }
 
     cin >> startRow;
     cin >> startCol;
     cin >> endRow;
     cin >> endCol;
-    priority_queue<char> frontier;
-    frontier.push(0);
+    priority_queue<pair<int,pair<int,int> > > frontier;
+    frontier.push({0,{startRow,startCol}});
     std::map<int,int> marked;
     while(!frontier.empty());  
     {
-        int variable = frontier.top();
+        auto it = frontier.top();
+        int weight = it.first;
+        int from = it.second.first;
+        int to = it.second.second;
         frontier.pop();
-        if(marked.find(variable) != marked.end())
+        if(marked.find(from) != marked.end())
         {
             
         }
