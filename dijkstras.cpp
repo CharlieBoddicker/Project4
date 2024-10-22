@@ -5,7 +5,8 @@ using namespace std;
 #include<map>
 #include<queue>
 #include<utility>
-int main(int argc, char *argv[]) 
+#include<deque>
+int main(int argc, char *argv[])
 {
     int tileN;
     char tileName;
@@ -34,45 +35,97 @@ int main(int argc, char *argv[])
     cin >> mapRows;
     cin >> mapCols;
 
+    vector<vector<int>> distances;
+    
+    distances.resize(mapRows);
     map.resize(mapRows);
     for(int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
+        distances[i].resize(mapCols);
         for(int j = 0; j < mapCols; j++)
         {
             cin >> tile;
-            for(int k = 0; k < tileNames.size(); ++k)
+            for(int k = 0; k < (int)tileNames.size(); ++k)
             {
                 if(tileNames[k] == tile)
                 {
                     tmp = tileCosts[k];
                 }
                 map[i][j] = tmp;
+                distances[i][j] = tmp;
             }
-            cout << map[i][j] << " ";
+            //cout << distances[i][j] << " ";
         }
-        cout << endl;
+        //cout << endl;
     }
 
     cin >> startRow;
     cin >> startCol;
     cin >> endRow;
     cin >> endCol;
-    priority_queue<pair<int,pair<int,int> > > frontier;
-    frontier.push({0,{startRow,startCol}});
-    std::map<int,int> marked;
-    while(!frontier.empty());  
-    {
-        auto it = frontier.top();
-        int weight = it.first;
-        int from = it.second.first;
-        int to = it.second.second;
-        frontier.pop();
-        if(marked.find(from) != marked.end())
-        {
-            
+
+    deque<int> frontier;
+    deque<int> frontierRow;
+    deque<int> frontierCol;
+    vector<int> markedRow;
+    vector<int> markedCol;
+    int row = startRow;
+    int col = startCol;
+    bool marked = false;
+
+    while(markedRow.size() != startRow*startCol){
+        if(row!=0){
+            for(int i = 0; i < (int)markedRow.size(); i++){
+                if(markedRow[i] == row-1 && markedCol[i] == col){
+                    marked = true;
+                }
+            }
+            if(marked == false){
+                frontier.push_back(map[row-1][col]);
+                frontierRow.push_back(row-1);
+                frontierCol.push_back(col);
+            }
         }
-        
+        marked = false;
+        if(row != mapRows-1){
+            for(int i = 0; i < (int)markedRow.size(); i++){
+                if(markedRow[i] == row+1 && markedCol[i] == col){
+                    marked = true;
+                }
+            }
+            if(marked == false){
+                frontier.push_back(map[row+1][col]);
+                frontierRow.push_back(row+1);
+                frontierCol.push_back(col);
+            }
+        }
+        marked = false;
+        if(col!=0){
+            for(int i = 0; i < (int)markedRow.size(); i++){
+                if(markedRow[i] == row && markedCol[i] == col-1){
+                    marked = true;
+                }
+            }
+            if(marked == false){
+                frontier.push_back(map[row][col-1]);
+                frontierRow.push_back(row);
+                frontierCol.push_back(col-1);
+            }
+        }
+        marked = false;
+        if(col != mapCols-1){
+            for(int i = 0; i < (int)markedRow.size(); i++){
+                if(markedRow[i] == row && markedCol[i] == col+1){
+                    marked = true;
+                }
+            }
+            if(marked == false){
+                frontier.push_back(map[row][col+1]);
+                frontierRow.push_back(row);
+                frontierCol.push_back(col+1);
+            }
+        }
     }
     return 0;
 
