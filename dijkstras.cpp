@@ -34,10 +34,14 @@ int main(int argc, char *argv[])
     cin >> mapRows;
     cin >> mapCols;
 
+     vector<vector<int>> distances;
+
+    distances.resize(mapRows);
     map.resize(mapRows);
     for(int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
+        distances[i].resize(mapCols);
         for(int j = 0; j < mapCols; j++)
         {
             cin >> tile;
@@ -48,10 +52,11 @@ int main(int argc, char *argv[])
                     tmp = tileCosts[k];
                 }
                 map[i][j] = tmp;
+                distances[i][j] = tmp;
             }
-            cout << map[i][j] << " ";
+            //cout << distances[i][j] << " ";
         }
-        cout << endl;
+        //cout << endl;
     }
 
     cin >> startRow;
