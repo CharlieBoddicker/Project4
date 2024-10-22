@@ -5,8 +5,7 @@ using namespace std;
 #include<map>
 #include<queue>
 #include<utility>
-#include<deque>
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) 
 {
     int tileN;
     char tileName;
@@ -21,7 +20,7 @@ int main(int argc, char *argv[])
     int tmp;
     int totalCost;
     vector<char> tileNames;
-    vector<char> tileCosts;
+    vector<int> tileCosts;
     vector<vector<int>> map;
 
     cin >> tileN;
@@ -35,97 +34,65 @@ int main(int argc, char *argv[])
     cin >> mapRows;
     cin >> mapCols;
 
-    vector<vector<int>> distances;
-    
-    distances.resize(mapRows);
     map.resize(mapRows);
     for(int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
-        distances[i].resize(mapCols);
         for(int j = 0; j < mapCols; j++)
         {
             cin >> tile;
-            for(int k = 0; k < (int)tileNames.size(); ++k)
+            for(int k = 0; k < tileNames.size(); ++k)
             {
                 if(tileNames[k] == tile)
                 {
                     tmp = tileCosts[k];
                 }
                 map[i][j] = tmp;
-                distances[i][j] = tmp;
             }
-            //cout << distances[i][j] << " ";
+            cout << map[i][j] << " ";
         }
-        //cout << endl;
+        cout << endl;
     }
 
     cin >> startRow;
     cin >> startCol;
     cin >> endRow;
     cin >> endCol;
+    priority_queue<pair<int,pair<int,int> > > frontier;
+    frontier.push({-0,{startRow,startCol}});
+    std::map<pair<int,int>, int> marked;
+    while(!frontier.empty())  
+    {
+        auto it = frontier.top();
+        int weight = -it.first;
+        int row = it.second.first;
+        int col = it.second.second;
+        frontier.pop();
+        if(marked.find({row,col}) != marked.end())
+        {
+            continue;
+        }
+        marked.insert({{row,col},weight});
+        if(row == endRow && col == endCol)
+        {
+            cout << weight << endl;
+            break;
+        }
+        for(int i = 0; i < 1; ++i)
+        {
+            for(int j = 0; j < 1; ++j)
+            {
+                int newRow = i;
+                int newCol = j;
+                if(i == 0 && j == 0)
+                {
+                    continue;
+                }
+                
+            }
+        }
 
-    deque<int> frontier;
-    deque<int> frontierRow;
-    deque<int> frontierCol;
-    vector<int> markedRow;
-    vector<int> markedCol;
-    int row = startRow;
-    int col = startCol;
-    bool marked = false;
-
-    while(markedRow.size() != startRow*startCol){
-        if(row!=0){
-            for(int i = 0; i < (int)markedRow.size(); i++){
-                if(markedRow[i] == row-1 && markedCol[i] == col){
-                    marked = true;
-                }
-            }
-            if(marked == false){
-                frontier.push_back(map[row-1][col]);
-                frontierRow.push_back(row-1);
-                frontierCol.push_back(col);
-            }
-        }
-        marked = false;
-        if(row != mapRows-1){
-            for(int i = 0; i < (int)markedRow.size(); i++){
-                if(markedRow[i] == row+1 && markedCol[i] == col){
-                    marked = true;
-                }
-            }
-            if(marked == false){
-                frontier.push_back(map[row+1][col]);
-                frontierRow.push_back(row+1);
-                frontierCol.push_back(col);
-            }
-        }
-        marked = false;
-        if(col!=0){
-            for(int i = 0; i < (int)markedRow.size(); i++){
-                if(markedRow[i] == row && markedCol[i] == col-1){
-                    marked = true;
-                }
-            }
-            if(marked == false){
-                frontier.push_back(map[row][col-1]);
-                frontierRow.push_back(row);
-                frontierCol.push_back(col-1);
-            }
-        }
-        marked = false;
-        if(col != mapCols-1){
-            for(int i = 0; i < (int)markedRow.size(); i++){
-                if(markedRow[i] == row && markedCol[i] == col+1){
-                    marked = true;
-                }
-            }
-            if(marked == false){
-                frontier.push_back(map[row][col+1]);
-                frontierRow.push_back(row);
-                frontierCol.push_back(col+1);
-            }
-        }
+        
     }
     return 0;
 
