@@ -1,10 +1,11 @@
 // dijsktras.cpp
 using namespace std;
-#include<iostream>
-#include<vector>
-#include<map>
-#include<queue>
-#include<utility>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <queue>
+#include <utility>
+
 int main(int argc, char *argv[]) 
 {
     int tileN;
@@ -18,14 +19,13 @@ int main(int argc, char *argv[])
     int endRow;
     int endCol;
     int tmp;
-    int totalCost;
     vector<char> tileNames;
     vector<int> tileCosts;
     vector<vector<int>> map;
-	vector<vector<int>>	distances;
+    vector<vector<int>> distances;
 
     cin >> tileN;
-    for(int i = 0; i < tileN; i++)
+    for (int i = 0; i < tileN; i++)
     {
         cin >> tileName;
         cin >> tileCost;
@@ -36,26 +36,23 @@ int main(int argc, char *argv[])
     cin >> mapCols;
 
     map.resize(mapRows);
-	distances.resize(mapRows);
-    for(int i = 0; i < mapRows; i++)
+    distances.resize(mapRows);
+    for (int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
-		distances[i].resize(mapCols);
-        for(int j = 0; j < mapCols; j++)
+        distances[i].resize(mapCols, -1);
+        for (int j = 0; j < mapCols; j++)
         {
             cin >> tile;
-            for(int k = 0; k < tileNames.size(); ++k)
+            for (int k = 0; k < tileNames.size(); ++k)
             {
-                if(tileNames[k] == tile)
+                if (tileNames[k] == tile)
                 {
                     tmp = tileCosts[k];
                 }
                 map[i][j] = tmp;
-				distances[i][j] = -1;
             }
-            cout << map[i][j] << " ";
         }
-        cout << endl;
     }
 
     cin >> startRow;
@@ -63,127 +60,115 @@ int main(int argc, char *argv[])
     cin >> endRow;
     cin >> endCol;
 
-    priority_queue<pair<int,pair<int,int> > > frontier;
-	priority_queue<pair<int,pair<int,int> > > prevFrontier;
-    frontier.push({0,{startRow,startCol}});
-	prevFrontier.push({0,{startRow,startCol}});
-    std::map<pair<int,int>, int> marked;
-	distances[startRow][startCol] = 0;
-	int previousRow;
-	int previousCol;
-	int counter = 0;
-    
-	while(!frontier.empty())  
+    priority_queue<pair<int, pair<int, int>>> frontier;
+    frontier.push({0, {startRow, startCol}});
+    std::map<pair<int, int>, int> marked;
+    std::map<pair<int, int>, pair<int, int>> previous;
+    distances[startRow][startCol] = 0;
+
+    while (!frontier.empty())  
     {
-		counter++;
         auto it = frontier.top();
         int weight = -it.first;
         int row = it.second.first;
         int col = it.second.second;
-		
-		it = prevFrontier.top();
-		previousRow = it.second.first;
-		previousCol = it.second.second;
-
-		bool check = false;
-        frontier.pop();
-		prevFrontier.pop();
-		//cout << weight << endl;
-		//cout << row << " ";
-		//cout << col << endl;
-		
-        if(marked.find({row,col}) != marked.end())
+        frontier.pop();    
+        if (marked.find({row, col}) != marked.end())
         {
             continue;
-        }
-		
-        marked.insert({{row,col},weight});
-		
-
-		if (counter!=1) distances[row][col] = (map[previousRow][previousCol]) + (distances[previousRow][previousCol]);
-		else distances[row][col] = 0;
-        /*
-		if(row == endRow && col == endCol)
+        }    
+        marked.insert({{row, col}, weight});
+        if (row == endRow && col == endCol)
         {
-            //cout << weight << endl;
             break;
         }
-		*/
-		/*
-        for(int i = 0; i < 1; ++i)
+
+        //up
+        if (row > 0)
         {
-            for(int j = 0; j < 1; ++j)
+            int newRow = row - 1;
+            int newCol = col;
+            int newWeight = weight + map[newRow][newCol];
+            if (distances[newRow][newCol] == -1 || newWeight < distances[newRow][newCol])
             {
-                int newRow = i;
-                int newCol = j;
-                if(i == 0 && j == 0)
-                {
-                    continue;
-                }
-                
+                distances[newRow][newCol] = newWeight;
+                frontier.push({-newWeight, {newRow, newCol}});
+                previous[{newRow, newCol}] = {row, col};
             }
         }
-		*/
-		if(row!=0){
-			if(marked.find({row-1,col}) != marked.end())
-			{
-				check = true;
-			}
-            if(check == false){
-                frontier.push({-map[row-1][col],{row-1,col}});
-				prevFrontier.push({-map[row-1][col],{row,col}});
-				cout << row-1 << " " << col << " ";
-            }
-        }
-        check = false;
-        if(row != mapRows-1){
-            if(marked.find({row+1,col}) != marked.end())
-            {
-                check = true;
-            }
-            if(check == false){
-                frontier.push({-map[row+1][col],{row+1,col}});
-				prevFrontier.push({-map[row+1][col],{row,col}});
-				cout << row+1 << " " << col << " ";
-            }
-        }
-        check = false;
-        if(col!=0){
-            if(marked.find({row,col-1}) != marked.end())
-            {
-                check = true;
-            }
-            if(check == false){
-                frontier.push({-map[row][col-1],{row,col-1}});
-				prevFrontier.push({-map[row][col-1],{row,col}});
-				cout << row << " " << col-1 << " ";
-            }
-        }
-        check = false;
-        if(col != mapCols-1){
-            if(marked.find({row,col+1}) != marked.end())
-            {
-                check = true;
-            }
-            if(check == false){
-                frontier.push({-map[row][col+1],{row,col+1}});
-				prevFrontier.push({-map[row][col+1],{row,col}});
-				cout << row << " " << col+1 << " ";
-            }
-        }
-		cout << endl;
-		check = false;
 
+        //down
+        if (row < mapRows - 1)
+        {
+            int newRow = row + 1;
+            int newCol = col;
+            int newWeight = weight + map[newRow][newCol];
+            if (distances[newRow][newCol] == -1 || newWeight < distances[newRow][newCol])
+            {
+                distances[newRow][newCol] = newWeight;
+                frontier.push({-newWeight, {newRow, newCol}});
+                previous[{newRow, newCol}] = {row, col};
+            }
+        }
 
+        //right
+        if (col < mapCols - 1)
+        {
+            int newRow = row;
+            int newCol = col + 1;
+            int newWeight = weight + map[newRow][newCol];
+            if (distances[newRow][newCol] == -1 || newWeight < distances[newRow][newCol])
+            {
+                distances[newRow][newCol] = newWeight;
+                frontier.push({-newWeight, {newRow, newCol}});
+                previous[{newRow, newCol}] = {row, col};
+            }
+        }
 
-        
+        //left
+        if (col > 0)
+        {
+            int newRow = row;
+            int newCol = col - 1;
+            int newWeight = weight + map[newRow][newCol];
+            if (distances[newRow][newCol] == -1 || newWeight < distances[newRow][newCol])
+            {
+                distances[newRow][newCol] = newWeight;
+                frontier.push({-newWeight, {newRow, newCol}});
+                previous[{newRow, newCol}] = {row, col};
+            }
+        }
     }
-	for(int i = 0; i < mapRows; i ++){
-		for(int j = 0; j < mapCols; j++){
-			cout << distances[i][j] << " ";
-		}
-		cout << endl;
-	}
-    return 0;
 
+    //backtrack to find the path
+    vector<int> pathRows;
+    vector<int> pathCols;
+    int currentRow = endRow;
+    int currentCol = endCol;
+
+    if (marked.find({endRow, endCol}) != marked.end()) 
+    {
+        while (currentRow != startRow || currentCol != startCol) 
+        {
+            pathRows.push_back(currentRow);
+            pathCols.push_back(currentCol);
+            auto prev = previous[{currentRow, currentCol}];
+            currentRow = prev.first;
+            currentCol = prev.second;
+        }
+        pathRows.push_back(startRow);
+        pathCols.push_back(startCol);
+    }
+
+    int totalWeight = distances[endRow][endCol]; //get the distance to the destination
+    totalWeight += map[startRow][startCol]; //include cost of leaving starting tile
+    totalWeight -= map[endRow][endCol]; //exclude cost of leaving destination tile
+    cout << totalWeight << endl;
+    //print the path in reverse order
+    for (int i = pathRows.size() - 1; i >= 0; i--) 
+    {
+        cout << pathRows[i] << " " << pathCols[i] << endl;
+    }
+
+    return 0;
 }
