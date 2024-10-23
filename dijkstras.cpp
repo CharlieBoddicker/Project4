@@ -1,4 +1,9 @@
-// dijsktras.cpp
+// Owen Youngblood, Charles Boddicker
+// project 4 Path Finding
+// this code finds the shortest path between a start and end point on a 2d grid representing a playing field.
+// references: https://www.geeksforgeeks.org/priority-queue-in-cpp-stl/
+//             https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-using-priority_queue-stl/
+               
 using namespace std;
 #include <iostream>
 #include <vector>
@@ -37,6 +42,7 @@ int main(int argc, char *argv[])
 
     map.resize(mapRows);
     distances.resize(mapRows);
+    //fill 2d map vector with the weights of the cells.
     for (int i = 0; i < mapRows; i++)
     {
         map[i].resize(mapCols);
@@ -60,12 +66,12 @@ int main(int argc, char *argv[])
     cin >> endRow;
     cin >> endCol;
 
-    priority_queue<pair<int, pair<int, int>>> frontier;
+    priority_queue<pair<int, pair<int, int>>> frontier;//to store in the format <weight,<row,column>>
     frontier.push({0, {startRow, startCol}});
-    std::map<pair<int, int>, int> marked;
-    std::map<pair<int, int>, pair<int, int>> previous;
+    std::map<pair<int, int>, int> marked;//node -> weight 
+    std::map<pair<int, int>, pair<int, int>> previous;//to track the previous cell so we can backtrack
     distances[startRow][startCol] = 0;
-
+    //dijkstra's algorithm
     while (!frontier.empty())  
     {
         auto it = frontier.top();
